@@ -82,7 +82,7 @@
     const endStr = fmtDateTime(end);
 
     cardEmoji.textContent = ok ? "🎉" : "⏳";
-    cardTitle.textContent = (titleEl.textContent || "晨读") + "已完成";
+    cardTitle.textContent = (titleEl.textContent || "阅读") + "已完成";
     cardBadge.textContent = ok
       ? "✅ 已达 30 分钟，可换学时"
       : "⚠️ 未达 30 分钟，还差 " + fmtCN(THRESHOLD - duration);
@@ -126,7 +126,7 @@
     }
 
     titleEl.textContent = item.title || item.date || id;
-    document.title = (item.title || "晨读") + " · MorningRead";
+    document.title = (item.title || "阅读") + " · DailyReading";
 
     try {
       pdfjsLib.GlobalWorkerOptions.workerSrc = "assets/vendor/pdf.worker.min.js";

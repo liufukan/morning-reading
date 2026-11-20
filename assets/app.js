@@ -104,7 +104,7 @@ function renderList(items) {
   list.innerHTML = "";
   const sorted = [...items].sort((a, b) => String(b.date || "").localeCompare(String(a.date || "")));
   if (!sorted.length) {
-    list.innerHTML = '<li class="empty">暂无晨读材料</li>';
+    list.innerHTML = '<li class="empty">暂无阅读材料</li>';
     return;
   }
   for (const m of sorted) {

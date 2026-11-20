@@ -80,7 +80,7 @@
   }
 
   function defaultTitle(date) {
-    return parseInt(date.slice(5, 7), 10) + "月" + parseInt(date.slice(8, 10), 10) + "日晨读";
+    return parseInt(date.slice(5, 7), 10) + "月" + parseInt(date.slice(8, 10), 10) + "日阅读";
   }
 
   function refreshPatStatus() {
