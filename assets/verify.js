@@ -2,13 +2,13 @@
 
 (function () {
   const $ = (s) => document.querySelector(s);
-  const nameEl = $("#vName"), idEl = $("#vId"), startEl = $("#vStart"), endEl = $("#vEnd"), codeEl = $("#vCode");
+  const idEl = $("#vId"), codeEl = $("#vCode");
   const btn = $("#verifyBtn"), out = $("#verifyResult");
-  const THRESHOLD = 30 * 60 * 1000;
 
-  function parseDT(s) {
-    const t = new Date(String(s).trim().replace(" ", "T"));
-    return isNaN(t.getTime()) ? null : t.getTime();
+  function fmtDT(ms) {
+    const d = new Date(ms), p = (n) => String(n).padStart(2, "0");
+    return d.getFullYear() + "-" + p(d.getMonth() + 1) + "-" + p(d.getDate()) +
+      " " + p(d.getHours()) + ":" + p(d.getMinutes()) + ":" + p(d.getSeconds());
   }
   function fmtCN(ms) {
     const s = Math.floor(ms / 1000);
@@ -21,35 +21,24 @@
   }
 
   btn.addEventListener("click", async () => {
-    const name = nameEl.value.trim(), id = idEl.value.trim();
-    const s = startEl.value.trim(), e = endEl.value.trim(), code = codeEl.value.trim();
-    if (!name || !id || !s || !e || !code) {
-      show("warn", "请填写全部字段：姓名、学号、开始时间、结束时间、审核码。");
+    const id = idEl.value.trim(), code = codeEl.value.trim();
+    if (!id || !code) {
+      show("warn", "请填写学号和核验码。");
       return;
     }
-    const st = parseDT(s), en = parseDT(e);
-    if (st == null || en == null) {
-      show("warn", "时间格式应为 YYYY-MM-DD HH:MM:SS，例如 2026-11-20 07:30:00。");
-      return;
-    }
-    if (en < st) {
-      show("warn", "结束时间早于开始时间，请核对截图。");
-      return;
-    }
-    let expected;
+    let res;
     try {
-      expected = await mrComputeCode(name, id, s, e);
+      res = await mrCheckCode(id, code);
     } catch {
       show("warn", "当前环境不支持核验（需 HTTPS 或 localhost）。");
       return;
     }
-    const dur = en - st;
-    const ok = dur >= THRESHOLD;
-    if (mrNormalizeCode(code) !== mrNormalizeCode(expected)) {
-      show("bad", "❌ 审核码不匹配，疑似伪造（P 图）。请核对截图上的姓名、学号、起止时间与审核码是否一致。");
+    if (!res.match) {
+      show("bad", "❌ 不合格：学号与核验码不对应（疑似伪造，或学号填错）。");
       return;
     }
-    if (ok) show("good", "✅ 审核码匹配，时长 " + fmtCN(dur) + "，已达 30 分钟，可发学时。");
-    else show("warn", "⚠️ 审核码匹配，但时长 " + fmtCN(dur) + "，未达 30 分钟。");
+    const detail = "\n开始：" + fmtDT(res.startMs) + "\n结束：" + fmtDT(res.endMs) + "\n时长：" + fmtCN(res.durationMs);
+    if (res.ok) show("good", "✅ 合格：核验码匹配，已达 30 分钟，可发学时。" + detail);
+    else show("warn", "❌ 不合格：核验码匹配，但时长不足 30 分钟。" + detail);
   });
 })();

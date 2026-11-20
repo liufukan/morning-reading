@@ -17,14 +17,11 @@
 
   <main class="container">
     <h1 class="page-title">核验晨读审核码</h1>
-    <p class="page-sub">照着同学截图输入以下信息。审核码不匹配即为疑似伪造；匹配后再看时长是否达 30 分钟。</p>
+    <p class="page-sub">输入同学的学号和截图上的核验码即可。对应且读满 30 分钟为合格；不对应疑似伪造。</p>
 
     <section class="admin-section">
-      <label class="field"><span>姓名</span><input id="vName" type="text" autocomplete="off" /></label>
       <label class="field"><span>学号</span><input id="vId" type="text" inputmode="numeric" autocomplete="off" /></label>
-      <label class="field"><span>开始时间</span><input id="vStart" type="text" placeholder="2026-11-20 07:30:00" autocomplete="off" /></label>
-      <label class="field"><span>结束时间</span><input id="vEnd" type="text" placeholder="2026-11-20 08:05:00" autocomplete="off" /></label>
-      <label class="field"><span>审核码</span><input id="vCode" type="text" placeholder="K7Q2M-9X4PA" autocomplete="off" /></label>
+      <label class="field"><span>核验码</span><input id="vCode" type="text" placeholder="XXXXX-XXXXX-XXXXX-XXXXX-XXX" autocomplete="off" /></label>
       <button id="verifyBtn" class="btn btn-primary" type="button">核验</button>
     </section>
 
