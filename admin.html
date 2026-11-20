@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>管理上传 · MorningRead</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="logo">🌅 <span>MorningRead</span> <span class="admin-tag">管理</span></div>
+    <a class="btn btn-ghost" href="index.html">返回首页</a>
+  </header>
+
+  <main class="container">
+    <h1 class="page-title">上传晨读材料</h1>
+    <p class="page-sub">仅管理员可用。令牌只保存在你自己的浏览器里，不会上传到任何服务器。</p>
+
+    <section class="admin-section">
+      <h2>1. GitHub 令牌</h2>
+      <label class="field">
+        <span>细粒度令牌（仅本仓库 Contents 读写）</span>
+        <input id="patInput" type="password" placeholder="github_pat_..." autocomplete="off" />
+      </label>
+      <div class="pat-row">
+        <button id="patSave" class="btn btn-ghost" type="button">保存令牌</button>
+        <span id="patStatus" class="pat-status"></span>
+      </div>
+    </section>
+
+    <section class="admin-section">
+      <h2>2. 材料信息</h2>
+      <label class="field"><span>日期</span><input id="dateInput" type="date" /></label>
+      <label class="field"><span>标题</span><input id="titleInput" type="text" placeholder="11月20日晨读" /></label>
+      <label class="field"><span>PDF 文件</span><input id="fileInput" type="file" accept="application/pdf,.pdf" /></label>
+      <button id="uploadBtn" class="btn btn-primary" type="button">上传并发布</button>
+    </section>
+
+    <div id="adminLog" class="admin-log"></div>
+  </main>
+
+  <script src="assets/admin.js"></script>
+</body>
+</html>

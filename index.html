@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>MorningRead · 英语晨读</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="logo">🌅 <span>MorningRead</span></div>
+    <div class="user-area">
+      <span id="who" class="who hidden"></span>
+      <button id="loginBtn" class="btn btn-ghost" type="button">登录</button>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1 class="page-title">晨读材料</h1>
+    <p class="page-sub">选择今天的材料，进入即开始计时，读满 30 分钟可换二课学时。</p>
+
+    <ul id="list" class="material-list">
+      <li class="material-item">
+        <div class="material-date">11月20日晨读</div>
+        <div class="material-actions">
+          <a class="btn btn-ghost" href="#">下载</a>
+          <a class="btn btn-primary" href="#">进入</a>
+        </div>
+      </li>
+      <li class="material-item">
+        <div class="material-date">11月19日晨读</div>
+        <div class="material-actions">
+          <a class="btn btn-ghost" href="#">下载</a>
+          <a class="btn btn-primary" href="#">进入</a>
+        </div>
+      </li>
+      <li class="material-item">
+        <div class="material-date">11月18日晨读</div>
+        <div class="material-actions">
+          <a class="btn btn-ghost" href="#">下载</a>
+          <a class="btn btn-primary" href="#">进入</a>
+        </div>
+      </li>
+    </ul>
+  </main>
+
+  <div id="loginModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
+    <div class="modal-card">
+      <h2 id="loginTitle">登录</h2>
+      <p class="modal-sub">填写姓名和学号，仅保存在你自己的浏览器里。</p>
+      <label class="field">
+        <span>姓名</span>
+        <input id="nameInput" type="text" autocomplete="name" placeholder="请输入姓名" />
+      </label>
+      <label class="field">
+        <span>学号</span>
+        <input id="idInput" type="text" inputmode="numeric" placeholder="请输入学号" />
+      </label>
+      <div class="modal-actions">
+        <button id="loginCancel" class="btn btn-ghost" type="button">取消</button>
+        <button id="loginSave" class="btn btn-primary" type="button">保存</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/app.js"></script>
+</body>
+</html>

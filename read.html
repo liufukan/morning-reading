@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>晨读 · MorningRead</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <header class="topbar read-topbar">
+    <button id="exitBtn" class="btn btn-ghost" type="button">Exit</button>
+    <div id="readTitle" class="read-title">晨读</div>
+    <div id="timer" class="timer">0:00</div>
+  </header>
+
+  <main class="reader">
+    <div id="pdfStatus" class="pdf-status">材料加载中…</div>
+    <div id="pdfContainer" class="pdf-container"></div>
+  </main>
+
+  <div id="cardModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="cardTitle">
+    <div class="modal-card result-card">
+      <div id="cardEmoji" class="card-emoji">🎉</div>
+      <h2 id="cardTitle" class="card-title">晨读已完成</h2>
+      <div id="cardBadge" class="card-badge ok"></div>
+      <dl class="card-fields">
+        <div><dt>姓名</dt><dd id="cardName"></dd></div>
+        <div><dt>学号</dt><dd id="cardId"></dd></div>
+        <div><dt>开始时间</dt><dd id="cardStart"></dd></div>
+        <div><dt>结束时间</dt><dd id="cardEnd"></dd></div>
+        <div><dt>时长</dt><dd id="cardDuration"></dd></div>
+      </dl>
+      <p class="card-tip">截图本卡片，到二课系统申请学时。</p>
+      <div class="modal-actions">
+        <button id="cardContinue" class="btn btn-ghost" type="button">继续阅读</button>
+        <button id="cardHome" class="btn btn-primary" type="button">返回首页</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="assets/vendor/pdf.min.js"></script>
+  <script src="assets/app.js"></script>
+  <script src="assets/read.js"></script>
+</body>
+</html>
