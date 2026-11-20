@@ -3,6 +3,7 @@
 const ID_KEY = "mr_identity";
 const $ = (sel) => document.querySelector(sel);
 let pendingReadId = null;
+let pendingFree = false;
 
 function getIdentity() {
   try {
@@ -37,7 +38,7 @@ function openLogin(reason) {
   $("#idInput").value = identity?.id || "";
   const sub = $("#loginSub");
   if (sub) {
-    sub.textContent = reason === "read"
+    sub.textContent = reason === "read" || reason === "free"
       ? "阅读前请先填写姓名和学号。"
       : "填写姓名和学号，仅保存在你自己的浏览器里。";
   }
@@ -47,6 +48,7 @@ function openLogin(reason) {
 
 function closeLogin() {
   pendingReadId = null;
+  pendingFree = false;
   $("#loginModal").classList.add("hidden");
 }
 
@@ -58,11 +60,14 @@ function saveLogin() {
     return;
   }
   const target = pendingReadId;
+  const free = pendingFree;
   pendingReadId = null;
+  pendingFree = false;
   setIdentity({ name, id: sid });
   renderIdentity();
   closeLogin();
-  if (target) location.href = "read.html?id=" + encodeURIComponent(target);
+  if (free) location.href = "free.html";
+  else if (target) location.href = "read.html?id=" + encodeURIComponent(target);
 }
 
 function initLogin() {
@@ -70,6 +75,18 @@ function initLogin() {
   if (!btn) return;
   renderIdentity();
   btn.addEventListener("click", () => openLogin());
+  const freeBtn = $("#freeBtn");
+  if (freeBtn) {
+    freeBtn.addEventListener("click", () => {
+      const idn = getIdentity();
+      if (idn && idn.name && idn.id) {
+        location.href = "free.html";
+        return;
+      }
+      pendingFree = true;
+      openLogin("free");
+    });
+  }
   $("#loginCancel").addEventListener("click", closeLogin);
   $("#loginSave").addEventListener("click", saveLogin);
   $("#loginModal").addEventListener("click", (e) => {
