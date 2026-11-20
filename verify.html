@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>核验审核码 · MorningRead</title>
+  <link rel="stylesheet" href="assets/style.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="logo">🌅 <span>MorningRead</span> <span class="admin-tag">管理</span></div>
+    <div class="user-area">
+      <a class="btn btn-ghost" href="admin.html">返回管理</a>
+      <a class="btn btn-ghost" href="index.html">返回首页</a>
+    </div>
+  </header>
+
+  <main class="container">
+    <h1 class="page-title">核验晨读审核码</h1>
+    <p class="page-sub">照着同学截图输入以下信息。审核码不匹配即为疑似伪造；匹配后再看时长是否达 30 分钟。</p>
+
+    <section class="admin-section">
+      <label class="field"><span>姓名</span><input id="vName" type="text" autocomplete="off" /></label>
+      <label class="field"><span>学号</span><input id="vId" type="text" inputmode="numeric" autocomplete="off" /></label>
+      <label class="field"><span>开始时间</span><input id="vStart" type="text" placeholder="2026-11-20 07:30:00" autocomplete="off" /></label>
+      <label class="field"><span>结束时间</span><input id="vEnd" type="text" placeholder="2026-11-20 08:05:00" autocomplete="off" /></label>
+      <label class="field"><span>审核码</span><input id="vCode" type="text" placeholder="K7Q2M-9X4PA" autocomplete="off" /></label>
+      <button id="verifyBtn" class="btn btn-primary" type="button">核验</button>
+    </section>
+
+    <div id="verifyResult" class="verify-result"></div>
+  </main>
+
+  <script src="assets/code.js"></script>
+  <script src="assets/verify.js"></script>
+</body>
+</html>

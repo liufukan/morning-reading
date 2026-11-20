@@ -16,6 +16,7 @@
   const cardStart = document.getElementById("cardStart");
   const cardEnd = document.getElementById("cardEnd");
   const cardDuration = document.getElementById("cardDuration");
+  const cardCode = document.getElementById("cardCode");
   const cardContinue = document.getElementById("cardContinue");
   const cardHome = document.getElementById("cardHome");
 
@@ -72,11 +73,13 @@
   }
   startTicking();
 
-  function settle() {
+  async function settle() {
     stopTicking();
     const end = Date.now();
     const duration = end - start;
     const ok = duration >= THRESHOLD;
+    const startStr = fmtDateTime(start);
+    const endStr = fmtDateTime(end);
 
     cardEmoji.textContent = ok ? "🎉" : "⏳";
     cardTitle.textContent = (titleEl.textContent || "晨读") + "已完成";
@@ -86,9 +89,14 @@
     cardBadge.className = "card-badge " + (ok ? "ok" : "warn");
     cardName.textContent = identity.name;
     cardId.textContent = identity.id;
-    cardStart.textContent = fmtDateTime(start);
-    cardEnd.textContent = fmtDateTime(end);
+    cardStart.textContent = startStr;
+    cardEnd.textContent = endStr;
     cardDuration.textContent = fmtCN(duration);
+    try {
+      cardCode.textContent = await mrComputeCode(identity.name, identity.id, startStr, endStr);
+    } catch {
+      cardCode.textContent = "（本环境无法生成）";
+    }
     cardModal.classList.remove("hidden");
   }
 
