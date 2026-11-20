@@ -20,34 +20,14 @@
     <p class="page-sub">选择今天的材料，进入即开始计时，读满 30 分钟可换二课学时。</p>
 
     <ul id="list" class="material-list">
-      <li class="material-item">
-        <div class="material-date">11月20日晨读</div>
-        <div class="material-actions">
-          <a class="btn btn-ghost" href="#">下载</a>
-          <a class="btn btn-primary" href="#">进入</a>
-        </div>
-      </li>
-      <li class="material-item">
-        <div class="material-date">11月19日晨读</div>
-        <div class="material-actions">
-          <a class="btn btn-ghost" href="#">下载</a>
-          <a class="btn btn-primary" href="#">进入</a>
-        </div>
-      </li>
-      <li class="material-item">
-        <div class="material-date">11月18日晨读</div>
-        <div class="material-actions">
-          <a class="btn btn-ghost" href="#">下载</a>
-          <a class="btn btn-primary" href="#">进入</a>
-        </div>
-      </li>
+      <li class="empty">材料加载中…</li>
     </ul>
   </main>
 
   <div id="loginModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="loginTitle">
     <div class="modal-card">
       <h2 id="loginTitle">登录</h2>
-      <p class="modal-sub">填写姓名和学号，仅保存在你自己的浏览器里。</p>
+      <p id="loginSub" class="modal-sub">填写姓名和学号，仅保存在你自己的浏览器里。</p>
       <label class="field">
         <span>姓名</span>
         <input id="nameInput" type="text" autocomplete="name" placeholder="请输入姓名" />

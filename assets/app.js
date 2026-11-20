@@ -2,6 +2,7 @@
 
 const ID_KEY = "mr_identity";
 const $ = (sel) => document.querySelector(sel);
+let pendingReadId = null;
 
 function getIdentity() {
   try {
@@ -30,15 +31,22 @@ function renderIdentity() {
   }
 }
 
-function openLogin() {
+function openLogin(reason) {
   const identity = getIdentity();
   $("#nameInput").value = identity?.name || "";
   $("#idInput").value = identity?.id || "";
+  const sub = $("#loginSub");
+  if (sub) {
+    sub.textContent = reason === "read"
+      ? "阅读前请先填写姓名和学号。"
+      : "填写姓名和学号，仅保存在你自己的浏览器里。";
+  }
   $("#loginModal").classList.remove("hidden");
   $("#nameInput").focus();
 }
 
 function closeLogin() {
+  pendingReadId = null;
   $("#loginModal").classList.add("hidden");
 }
 
@@ -49,16 +57,19 @@ function saveLogin() {
     alert("请填写姓名和学号");
     return;
   }
+  const target = pendingReadId;
+  pendingReadId = null;
   setIdentity({ name, id: sid });
   renderIdentity();
   closeLogin();
+  if (target) location.href = "read.html?id=" + encodeURIComponent(target);
 }
 
 function initLogin() {
   const btn = $("#loginBtn");
   if (!btn) return;
   renderIdentity();
-  btn.addEventListener("click", openLogin);
+  btn.addEventListener("click", () => openLogin());
   $("#loginCancel").addEventListener("click", closeLogin);
   $("#loginSave").addEventListener("click", saveLogin);
   $("#loginModal").addEventListener("click", (e) => {
@@ -67,6 +78,7 @@ function initLogin() {
   document.addEventListener("keydown", (e) => {
     if (e.key === "Escape") closeLogin();
   });
+  if (new URLSearchParams(location.search).get("login") === "1") openLogin("read");
 }
 
 function renderList(items) {
@@ -99,6 +111,13 @@ function renderList(items) {
     enter.className = "btn btn-primary";
     enter.href = "read.html?id=" + encodeURIComponent(m.id);
     enter.textContent = "进入";
+    enter.addEventListener("click", (e) => {
+      const idn = getIdentity();
+      if (idn && idn.name && idn.id) return;
+      e.preventDefault();
+      pendingReadId = m.id;
+      openLogin("read");
+    });
 
     actions.append(dl, enter);
     li.append(date, actions);
@@ -110,7 +129,7 @@ async function initList() {
   const list = $("#list");
   if (!list) return;
   try {
-    const res = await fetch("manifest.json", { cache: "no-cache" });
+    const res = await fetch("manifest.json?v=" + Date.now(), { cache: "no-store" });
     if (!res.ok) throw new Error(String(res.status));
     const items = await res.json();
     renderList(Array.isArray(items) ? items : []);

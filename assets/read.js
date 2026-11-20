@@ -23,7 +23,7 @@
 
   const identity = getIdentity();
   if (!identity || !identity.name || !identity.id) {
-    location.replace("index.html");
+    location.replace("index.html?login=1");
     return;
   }
 
@@ -105,7 +105,7 @@
   async function load() {
     let item;
     try {
-      const res = await fetch("manifest.json", { cache: "no-cache" });
+      const res = await fetch("manifest.json?v=" + Date.now(), { cache: "no-store" });
       const items = await res.json();
       item = (items || []).find((m) => m.id === id);
     } catch {
@@ -169,10 +169,13 @@
         wrap.style.height = viewport.height + "px";
         wrap.style.setProperty("--scale-factor", String(scale));
 
+        const outputScale = Math.min(window.devicePixelRatio || 1, 2);
         const canvas = document.createElement("canvas");
         canvas.className = "pdf-page";
-        canvas.width = viewport.width;
-        canvas.height = viewport.height;
+        canvas.width = Math.floor(viewport.width * outputScale);
+        canvas.height = Math.floor(viewport.height * outputScale);
+        canvas.style.width = Math.floor(viewport.width) + "px";
+        canvas.style.height = Math.floor(viewport.height) + "px";
         wrap.appendChild(canvas);
 
         const textDiv = document.createElement("div");
@@ -184,7 +187,8 @@
         wrap.appendChild(linkDiv);
 
         container.appendChild(wrap);
-        await page.render({ canvasContext: canvas.getContext("2d"), viewport }).promise;
+        const transform = outputScale !== 1 ? [outputScale, 0, 0, outputScale, 0, 0] : null;
+        await page.render({ canvasContext: canvas.getContext("2d"), viewport, transform }).promise;
 
         try {
           pdfjsLib.renderTextLayer({
