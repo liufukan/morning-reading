@@ -125,11 +125,43 @@
       const pdf = await pdfjsLib.getDocument(item.file).promise;
       statusEl.classList.add("hidden");
       const baseWidth = container.clientWidth || 720;
+      const viewports = [];
+      const topbar = document.querySelector(".topbar");
+
+      function scrollToDest(pageIndex, yOffset) {
+        const targetWrap = container.children[pageIndex];
+        if (!targetWrap) return;
+        const offset = (topbar ? topbar.offsetHeight : 0) + 12;
+        const y = targetWrap.getBoundingClientRect().top + window.scrollY + yOffset - offset;
+        window.scrollTo({ top: Math.max(0, y), behavior: "smooth" });
+      }
+
+      async function resolveDest(dest) {
+        if (typeof dest === "string") dest = await pdf.getDestination(dest);
+        if (!Array.isArray(dest) || dest[0] == null) return null;
+        let pageIndex;
+        if (typeof dest[0] === "number") {
+          pageIndex = dest[0];
+        } else {
+          try { pageIndex = await pdf.getPageIndex(dest[0]); } catch { return null; }
+        }
+        if (pageIndex == null || pageIndex < 0) return null;
+        const vp = viewports[pageIndex];
+        let yOffset = 0;
+        const kind = dest[1] && dest[1].name;
+        if (vp && kind === "XYZ" && typeof dest[3] === "number") {
+          yOffset = vp.convertToViewportPoint(typeof dest[2] === "number" ? dest[2] : 0, dest[3])[1];
+        } else if (vp && (kind === "FitH" || kind === "FitBH") && typeof dest[2] === "number") {
+          yOffset = vp.convertToViewportPoint(0, dest[2])[1];
+        }
+        return { pageIndex, yOffset };
+      }
       for (let n = 1; n <= pdf.numPages; n++) {
         const page = await pdf.getPage(n);
         const base = page.getViewport({ scale: 1 });
         const scale = Math.min(2, (baseWidth - 24) / base.width);
         const viewport = page.getViewport({ scale });
+        viewports[n - 1] = viewport;
 
         const wrap = document.createElement("div");
         wrap.className = "pdf-page-wrap";
@@ -165,7 +197,7 @@
         try {
           const annotations = await page.getAnnotations();
           for (const a of annotations) {
-            if (a.subtype !== "Link" || !a.url) continue;
+            if (a.subtype !== "Link") continue;
             const r = viewport.convertToViewportRectangle(a.rect);
             const left = Math.min(r[0], r[2]);
             const top = Math.min(r[1], r[3]);
@@ -173,14 +205,27 @@
             const h = Math.abs(r[3] - r[1]);
             const link = document.createElement("a");
             link.className = "pdf-link";
-            link.href = a.url;
-            link.target = "_blank";
-            link.rel = "noopener noreferrer";
-            link.title = a.url;
             link.style.left = left + "px";
             link.style.top = top + "px";
             link.style.width = w + "px";
             link.style.height = h + "px";
+            if (a.url) {
+              link.href = a.url;
+              link.target = "_blank";
+              link.rel = "noopener noreferrer";
+              link.title = a.url;
+            } else if (a.dest) {
+              const target = await resolveDest(a.dest);
+              if (!target) continue;
+              link.href = "#";
+              link.title = "跳转到文内引用";
+              link.addEventListener("click", (e) => {
+                e.preventDefault();
+                scrollToDest(target.pageIndex, target.yOffset);
+              });
+            } else {
+              continue;
+            }
             linkDiv.appendChild(link);
           }
         } catch {}

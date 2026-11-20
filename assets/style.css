@@ -179,8 +179,8 @@ body {
   box-shadow: var(--shadow);
 }
 .pdf-page { display: block; border-radius: 8px; }
-.pdf-link-layer { position: absolute; inset: 0; z-index: 3; }
-.pdf-link { position: absolute; display: block; cursor: pointer; border-radius: 2px; }
+.pdf-link-layer { position: absolute; inset: 0; z-index: 3; pointer-events: none; }
+.pdf-link { position: absolute; display: block; cursor: pointer; border-radius: 2px; pointer-events: auto; }
 .pdf-link:hover { background: rgba(249, 115, 22, 0.18); outline: 1px solid rgba(249, 115, 22, 0.5); }
 .pdf-status { text-align: center; color: var(--muted); padding: 40px 0; }
 
