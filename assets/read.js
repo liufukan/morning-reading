@@ -130,12 +130,60 @@
         const base = page.getViewport({ scale: 1 });
         const scale = Math.min(2, (baseWidth - 24) / base.width);
         const viewport = page.getViewport({ scale });
+
+        const wrap = document.createElement("div");
+        wrap.className = "pdf-page-wrap";
+        wrap.style.width = viewport.width + "px";
+        wrap.style.height = viewport.height + "px";
+        wrap.style.setProperty("--scale-factor", String(scale));
+
         const canvas = document.createElement("canvas");
         canvas.className = "pdf-page";
         canvas.width = viewport.width;
         canvas.height = viewport.height;
-        container.appendChild(canvas);
+        wrap.appendChild(canvas);
+
+        const textDiv = document.createElement("div");
+        textDiv.className = "textLayer";
+        wrap.appendChild(textDiv);
+
+        const linkDiv = document.createElement("div");
+        linkDiv.className = "pdf-link-layer";
+        wrap.appendChild(linkDiv);
+
+        container.appendChild(wrap);
         await page.render({ canvasContext: canvas.getContext("2d"), viewport }).promise;
+
+        try {
+          pdfjsLib.renderTextLayer({
+            textContentSource: page.streamTextContent(),
+            container: textDiv,
+            viewport,
+          });
+        } catch {}
+
+        try {
+          const annotations = await page.getAnnotations();
+          for (const a of annotations) {
+            if (a.subtype !== "Link" || !a.url) continue;
+            const r = viewport.convertToViewportRectangle(a.rect);
+            const left = Math.min(r[0], r[2]);
+            const top = Math.min(r[1], r[3]);
+            const w = Math.abs(r[2] - r[0]);
+            const h = Math.abs(r[3] - r[1]);
+            const link = document.createElement("a");
+            link.className = "pdf-link";
+            link.href = a.url;
+            link.target = "_blank";
+            link.rel = "noopener noreferrer";
+            link.title = a.url;
+            link.style.left = left + "px";
+            link.style.top = top + "px";
+            link.style.width = w + "px";
+            link.style.height = h + "px";
+            linkDiv.appendChild(link);
+          }
+        } catch {}
       }
     } catch (e) {
       statusEl.classList.remove("hidden");
