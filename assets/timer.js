@@ -3,7 +3,7 @@
 // 暂停期间不计入阅读时长：恢复时把暂停时长从起点扣除，
 // 使 卡片时长 = 核验码时长 = 实际阅读时长。
 function mrCreateTimer(sessionKey, opts) {
-  const idleMs = opts.idleMs || 120000;
+  const idleMs = opts.idleMs || 60000;
   const stored = Number(localStorage.getItem(sessionKey));
   let start = Number.isFinite(stored) && stored > 0 ? stored : Date.now();
   localStorage.setItem(sessionKey, String(start));
