@@ -207,7 +207,7 @@ body {
 }
 .card-fields dt { color: var(--muted); font-size: 13px; }
 .card-fields dd { margin: 0; font-weight: 600; font-size: 14px; font-variant-numeric: tabular-nums; }
-.card-code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 13px; letter-spacing: 0.5px; line-height: 1.4; color: #c2410c; word-break: break-all; text-align: right; }
+.card-code { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; font-size: 12px; letter-spacing: 0.5px; line-height: 1.4; color: #c2410c; word-break: break-all; text-align: right; }
 .card-tip { color: var(--muted); font-size: 12px; margin: 0 0 16px; }
 .result-card .modal-actions { justify-content: center; }
 

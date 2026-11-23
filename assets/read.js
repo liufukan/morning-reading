@@ -94,7 +94,7 @@
     cardEnd.textContent = endStr;
     cardDuration.textContent = fmtCN(duration);
     try {
-      cardCode.textContent = await mrComputeCode(identity.id, start, end);
+      cardCode.textContent = await mrComputeCode(identity.id, start, end, duration);
     } catch {
       cardCode.textContent = "（本环境无法生成）";
     }

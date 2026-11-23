@@ -37,8 +37,8 @@
       show("bad", "❌ 不合格：学号与核验码不对应（疑似伪造，或学号填错）。");
       return;
     }
-    const detail = "\n开始：" + fmtDT(res.startMs) + "\n结束：" + fmtDT(res.endMs) + "\n时长：" + fmtCN(res.durationMs);
-    if (res.ok) show("good", "✅ 合格：核验码匹配，已达 30 分钟，可发学时。" + detail);
-    else show("warn", "❌ 不合格：核验码匹配，但时长不足 30 分钟。" + detail);
+    const detail = "\n开始：" + fmtDT(res.startMs) + "\n结束：" + fmtDT(res.endMs) + "\n有效时长：" + fmtCN(res.activeMs);
+    if (res.ok) show("good", "✅ 合格：核验码匹配，有效时长已达 30 分钟，可发学时。" + detail);
+    else show("warn", "❌ 不合格：核验码匹配，但有效时长不足 30 分钟。" + detail);
   });
 })();

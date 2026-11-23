@@ -1,21 +1,39 @@
 "use strict";
 
-// 暂停期间不计入阅读时长：恢复时把暂停时长从起点扣除，
-// 使 卡片时长 = 核验码时长 = 实际阅读时长。
+// 真实开始时间固定不变；有效时长 = 累计运行毫秒，暂停期间不累加。
 function mrCreateTimer(sessionKey, opts) {
   const idleMs = opts.idleMs || 60000;
-  const stored = Number(localStorage.getItem(sessionKey));
-  let start = Number.isFinite(stored) && stored > 0 ? stored : Date.now();
-  localStorage.setItem(sessionKey, String(start));
+  const raw = localStorage.getItem(sessionKey);
+  let parsed = null;
+  try { parsed = JSON.parse(raw); } catch {}
+  let realStart, accum;
+  if (parsed && Number.isFinite(parsed.start) && Number.isFinite(parsed.accum)) {
+    realStart = parsed.start;
+    accum = parsed.accum;
+  } else {
+    const legacy = Number(raw);
+    if (Number.isFinite(legacy) && legacy > 0) {
+      realStart = legacy;
+      accum = Math.max(0, Date.now() - legacy);
+    } else {
+      realStart = Date.now();
+      accum = 0;
+    }
+  }
 
   let running = true;
-  let pausedAt = null;
+  let lastResume = Date.now();
   let cause = null;
   let lastActivity = Date.now();
   let handle = null;
 
+  function persist() {
+    localStorage.setItem(sessionKey, JSON.stringify({ start: realStart, accum }));
+  }
+  persist();
+
   function elapsed() {
-    return (running ? Date.now() : pausedAt) - start;
+    return accum + (running ? Date.now() - lastResume : 0);
   }
   function tick() {
     opts.onTick(elapsed());
@@ -31,21 +49,21 @@ function mrCreateTimer(sessionKey, opts) {
   }
   function doPause(c) {
     if (!running) return;
+    accum += Date.now() - lastResume;
     running = false;
     cause = c;
-    pausedAt = Date.now();
     stopTicking();
+    persist();
     opts.onTick(elapsed());
     opts.onPause(c);
   }
   function doResume() {
     if (running) return;
-    start += Date.now() - pausedAt;
-    localStorage.setItem(sessionKey, String(start));
     running = true;
     cause = null;
-    pausedAt = null;
+    lastResume = Date.now();
     lastActivity = Date.now();
+    persist();
     opts.onPause(null);
     startTicking();
   }
@@ -68,7 +86,7 @@ function mrCreateTimer(sessionKey, opts) {
   startTicking();
 
   return {
-    get start() { return start; },
+    get start() { return realStart; },
     elapsed,
     pause: () => doPause("manual"),
     resume: doResume,

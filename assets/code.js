@@ -55,26 +55,32 @@ async function mrSign(msg) {
   return new Uint8Array(await crypto.subtle.sign("HMAC", key, enc.encode(msg)));
 }
 
-// 码 = base32(开始秒[4] + 结束秒[4] + HMAC(学号|开始秒|结束秒)截断[6])，共 14 字节 → 23 位。
-async function mrComputeCode(id, startMs, endMs) {
+// 码 = base32(开始秒[4] + 结束秒[4] + 有效秒[4] + HMAC(学号|开始|结束|有效)截断[6])，共 18 字节 → 29 位。
+async function mrComputeCode(id, startMs, endMs, activeMs) {
   const startSec = Math.floor(startMs / 1000);
   const endSec = Math.floor(endMs / 1000);
-  const sig = await mrSign([id, startSec, endSec].join("|"));
-  const bytes = new Uint8Array([...mrWriteU32(startSec), ...mrWriteU32(endSec), ...sig.slice(0, 6)]);
+  const activeSec = Math.floor(activeMs / 1000);
+  const sig = await mrSign([id, startSec, endSec, activeSec].join("|"));
+  const bytes = new Uint8Array([
+    ...mrWriteU32(startSec), ...mrWriteU32(endSec), ...mrWriteU32(activeSec), ...sig.slice(0, 6),
+  ]);
   const b32 = mrBase32(bytes);
-  return [b32.slice(0, 5), b32.slice(5, 10), b32.slice(10, 15), b32.slice(15, 20), b32.slice(20)].join("-");
+  return [
+    b32.slice(0, 5), b32.slice(5, 10), b32.slice(10, 15),
+    b32.slice(15, 20), b32.slice(20, 25), b32.slice(25),
+  ].join("-");
 }
 
 async function mrCheckCode(id, codeStr) {
   const bytes = mrBase32Decode(mrNormalizeCode(codeStr));
-  if (!bytes || bytes.length !== 14) return { match: false };
+  if (!bytes || bytes.length !== 18) return { match: false };
   const startSec = mrReadU32(bytes, 0);
   const endSec = mrReadU32(bytes, 4);
-  const sig = bytes.slice(8, 14);
-  const expected = (await mrSign([id, startSec, endSec].join("|"))).slice(0, 6);
+  const activeSec = mrReadU32(bytes, 8);
+  const sig = bytes.slice(12, 18);
+  const expected = (await mrSign([id, startSec, endSec, activeSec].join("|"))).slice(0, 6);
   let match = true;
   for (let i = 0; i < 6; i++) if (sig[i] !== expected[i]) match = false;
-  const startMs = startSec * 1000, endMs = endSec * 1000;
-  const durationMs = endMs - startMs;
-  return { match, startMs, endMs, durationMs, ok: durationMs >= MR_THRESHOLD };
+  const startMs = startSec * 1000, endMs = endSec * 1000, activeMs = activeSec * 1000;
+  return { match, startMs, endMs, activeMs, ok: activeMs >= MR_THRESHOLD };
 }
