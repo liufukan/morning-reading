@@ -286,3 +286,14 @@ input[type="file"] { font-size: 14px; }
   text-shadow: 0 0 12px rgba(251, 146, 60, 0.55);
 }
 .free-tip { color: var(--muted); font-size: 14px; text-align: center; margin: 0; max-width: 420px; }
+.pause-hint {
+  background: var(--accent-soft);
+  color: #9a3412;
+  border: 1px solid #fed7aa;
+  border-radius: 10px;
+  padding: 10px 14px;
+  font-size: 14px;
+  text-align: center;
+  margin: 0 auto 14px;
+  max-width: 420px;
+}

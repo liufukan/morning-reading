@@ -25,9 +25,6 @@
   }
 
   const sessionKey = "mr_session_" + identity.id + "_free";
-  const stored = Number(localStorage.getItem(sessionKey));
-  const start = Number.isFinite(stored) && stored > 0 ? stored : Date.now();
-  localStorage.setItem(sessionKey, String(start));
 
   function fmtClock(ms) {
     const s = Math.floor(ms / 1000);
@@ -53,24 +50,28 @@
     return (h > 0 ? h + " 小时 " : "") + m + " 分 " + sec + " 秒";
   }
 
-  let timerHandle = null;
-  function tick() {
-    timerEl.textContent = fmtClock(Date.now() - start);
-  }
-  function startTicking() {
-    tick();
-    timerHandle = setInterval(tick, 1000);
-  }
-  function stopTicking() {
-    if (timerHandle) clearInterval(timerHandle);
-    timerHandle = null;
-  }
-  startTicking();
+  const pauseHint = document.getElementById("pauseHint");
+  const timer = mrCreateTimer(sessionKey, {
+    onTick: (ms) => { timerEl.textContent = fmtClock(ms); },
+    onPause: (c) => {
+      if (!pauseHint) return;
+      if (c === "hidden") {
+        pauseHint.textContent = "已暂停：离开页面或切换窗口，回来自动继续。";
+        pauseHint.classList.remove("hidden");
+      } else if (c === "idle") {
+        pauseHint.textContent = "已暂停：长时间无操作，滚动或点击继续。";
+        pauseHint.classList.remove("hidden");
+      } else {
+        pauseHint.classList.add("hidden");
+      }
+    },
+  });
 
   async function settle() {
-    stopTicking();
+    timer.pause();
     const end = Date.now();
-    const duration = end - start;
+    const start = timer.start;
+    const duration = timer.elapsed();
     const ok = duration >= THRESHOLD;
 
     cardEmoji.textContent = ok ? "🎉" : "⏳";
@@ -94,7 +95,7 @@
   exitBtn.addEventListener("click", settle);
   cardContinue.addEventListener("click", () => {
     cardModal.classList.add("hidden");
-    startTicking();
+    timer.resume();
   });
   cardHome.addEventListener("click", () => {
     localStorage.removeItem(sessionKey);
