@@ -12,6 +12,7 @@
     <button id="exitBtn" class="btn btn-ghost" type="button">Exit</button>
     <div id="readTitle" class="read-title">阅读</div>
     <div id="timer" class="timer">0:00</div>
+    <button id="transToggle" class="btn btn-ghost" type="button" aria-expanded="false">翻译</button>
   </header>
 
   <main class="reader">
@@ -41,10 +42,39 @@
     </div>
   </div>
 
+  <aside id="transPanel" class="trans-panel" aria-label="划词翻译">
+    <div class="trans-head">
+      <span class="trans-title">划词翻译</span>
+      <button id="transClose" class="trans-x" type="button" aria-label="关闭翻译面板">×</button>
+    </div>
+    <div class="trans-body">
+      <div class="trans-label">原文</div>
+      <div id="transSrc" class="trans-src"></div>
+      <div class="trans-label">译文</div>
+      <div id="transOut" class="trans-out"></div>
+      <div id="transStatus" class="trans-status"></div>
+      <div id="transKeyRow" class="trans-key hidden">
+        <input id="transKeyInput" type="password" placeholder="学校 API key（仅存本机）" autocomplete="off" />
+        <button id="transKeySave" class="btn btn-ghost" type="button">保存</button>
+      </div>
+      <div class="trans-tools">
+        <select id="transModel" class="trans-model" aria-label="翻译模型">
+          <option value="qwen3.8-chat">qwen3.8-chat</option>
+          <option value="deepseek-flash">deepseek-flash</option>
+          <option value="glm-5.3-flash">glm-5.3-flash</option>
+          <option value="smart/default">smart/default</option>
+        </select>
+        <button id="transRetry" class="btn btn-ghost" type="button">重译</button>
+        <button id="transCopy" class="btn btn-ghost" type="button">复制</button>
+      </div>
+    </div>
+  </aside>
+
   <script src="assets/vendor/pdf.min.js"></script>
   <script src="assets/code.js"></script>
   <script src="assets/app.js"></script>
   <script src="assets/timer.js"></script>
   <script src="assets/read.js"></script>
+  <script src="assets/translate.js"></script>
 </body>
 </html>
