@@ -87,7 +87,7 @@
     const endStr = fmtDateTime(end);
 
     cardEmoji.textContent = ok ? "🎉" : "⏳";
-    cardTitle.textContent = fmtCardDay(end) + "已完成";
+    cardTitle.textContent = fmtCardDay(end) + (ok ? "已完成" : "未完成");
     cardBadge.textContent = ok
       ? "✅ 已达 30 分钟，可换学时"
       : "⚠️ 未达 30 分钟，还差 " + fmtCN(THRESHOLD - duration);
