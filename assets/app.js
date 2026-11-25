@@ -111,9 +111,21 @@ function renderList(items) {
     const li = document.createElement("li");
     li.className = "material-item";
 
+    const info = document.createElement("div");
+    info.className = "material-info";
+
     const date = document.createElement("div");
     date.className = "material-date";
     date.textContent = m.title || m.date || m.id;
+    info.append(date);
+
+    if (m.date) {
+      const uploaded = document.createElement("div");
+      uploaded.className = "material-uploaded";
+      const p = /^(\d{4})-(\d{2})-(\d{2})$/.exec(String(m.date));
+      uploaded.textContent = "上传于 " + (p ? parseInt(p[2], 10) + "月" + parseInt(p[3], 10) + "日" : m.date);
+      info.append(uploaded);
+    }
 
     const actions = document.createElement("div");
     actions.className = "material-actions";
@@ -137,7 +149,7 @@ function renderList(items) {
     });
 
     actions.append(dl, enter);
-    li.append(date, actions);
+    li.append(info, actions);
     list.append(li);
   }
 }

@@ -6,6 +6,7 @@
 
   const cardModal = document.getElementById("cardModal");
   const cardEmoji = document.getElementById("cardEmoji");
+  const cardTitle = document.getElementById("cardTitle");
   const cardBadge = document.getElementById("cardBadge");
   const cardName = document.getElementById("cardName");
   const cardId = document.getElementById("cardId");
@@ -49,6 +50,10 @@
     const sec = s % 60;
     return (h > 0 ? h + " 小时 " : "") + m + " 分 " + sec + " 秒";
   }
+  function fmtCardDay(t) {
+    const d = new Date(t);
+    return (d.getMonth() + 1) + "月" + d.getDate() + "日";
+  }
 
   const pauseHint = document.getElementById("pauseHint");
   const timer = mrCreateTimer(sessionKey, {
@@ -75,6 +80,7 @@
     const ok = duration >= THRESHOLD;
 
     cardEmoji.textContent = ok ? "🎉" : "⏳";
+    cardTitle.textContent = fmtCardDay(end) + "已完成";
     cardBadge.textContent = ok
       ? "✅ 已达 30 分钟，可换学时"
       : "⚠️ 未达 30 分钟，还差 " + fmtCN(THRESHOLD - duration);

@@ -72,7 +72,9 @@ body {
   box-shadow: var(--shadow);
 }
 
+.material-info { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
 .material-date { font-size: 17px; font-weight: 600; }
+.material-uploaded { color: var(--muted); font-size: 12px; }
 
 .empty {
   background: var(--card);

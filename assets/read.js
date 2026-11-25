@@ -55,6 +55,10 @@
     const sec = s % 60;
     return (h > 0 ? h + " 小时 " : "") + m + " 分 " + sec + " 秒";
   }
+  function fmtCardDay(t) {
+    const d = new Date(t);
+    return (d.getMonth() + 1) + "月" + d.getDate() + "日";
+  }
 
   const pauseHint = document.getElementById("pauseHint");
   const timer = mrCreateTimer(sessionKey, {
@@ -83,7 +87,7 @@
     const endStr = fmtDateTime(end);
 
     cardEmoji.textContent = ok ? "🎉" : "⏳";
-    cardTitle.textContent = (titleEl.textContent || "阅读") + "已完成";
+    cardTitle.textContent = fmtCardDay(end) + "已完成";
     cardBadge.textContent = ok
       ? "✅ 已达 30 分钟，可换学时"
       : "⚠️ 未达 30 分钟，还差 " + fmtCN(THRESHOLD - duration);
